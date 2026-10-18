@@ -197,7 +197,7 @@ Softmax doesn't have this problem. Its Jacobian is $\partial \alpha_l/\partial s
 :::
 
 ::: {custom-style="Answer Text"}
-In practice this means whatever key a query happens to match at initialization is the key it keeps matching. The model can still learn what to say (the values), but not where to look. It also can't blend information from several positions, since every output is a copy of a single value.
+Which key a query matches can still change during training, because the layer's inputs change as earlier layers learn through the value and residual paths. But no gradient ever pushes a query or key toward a better match. The model can still learn what to say (the values), but not where to look. It also can't blend information from several positions, since every output is a copy of a single value.
 :::
 
 ## Superposition of Information in Self-Attention {#superposition-of-information-in-self-attention .unnumbered}
@@ -551,7 +551,7 @@ Done in `classification.py`. `evaluate_model` is the same as in `base_classifica
 :::
 
 ::: {custom-style="Answer Text"}
-Answer: dev accuracy 0.7856 and test accuracy 0.7730, with learning rate 2e-5, 6 epochs, and batch 32 (17 minutes on my GPU). I chose 2e-5 because it's in the 1e-5 to 3e-5 range the RoBERTa paper used for fine-tuning (Liu et al., 2019), and the 3.1.3 grid had already shown that 5e-4 and up collapses to always-yes. Dev accuracy after each epoch was 0.714, 0.769, 0.743, 0.777, 0.780, and 0.786, and training accuracy reached 0.964 in the last epoch.
+Answer: dev accuracy 0.7856 and test accuracy 0.7730, with learning rate 2e-5, 6 epochs, and batch 32 (17 minutes on my GPU). I chose 2e-5 because it's in the 1e-5 to 3e-5 range the RoBERTa paper used for fine-tuning (Liu et al., 2019), and the 3.1.3 grid had already shown that 5e-4 and up collapses to always-yes. Dev accuracy after each epoch was 0.714, 0.769, 0.743, 0.776, 0.780, and 0.786, and training accuracy reached 0.964 in the last epoch.
 :::
 
 ::: {custom-style="Answer Text"}
@@ -559,7 +559,7 @@ That's 7.2 points above the best distilBERT model from 3.1.3 on dev (0.786 again
 :::
 
 ::: {custom-style="Answer Text"}
-The script printed 124,745,474 tuned parameters. That count includes the 128 × 768 = 98,304-number prefix tensor, which every `CustomModelforSequenceClassification` creates but full mode never uses, so it gets no gradient and AdamW never changes it. The parameters that actually train are RoBERTa-base's 124,645,632 plus the 1,538 in the head, 124,647,170 in total.
+The script printed 124,745,474 tuned parameters. That count includes the 128 × 768 = 98,304-number prefix tensor, which every `CustomModelforSequenceClassification` creates but full mode never uses, so it gets no gradient and AdamW never changes it. RoBERTa's pooler is in the same position. `AutoModel` loads RoBERTa with it, a 768 × 768 layer plus bias (590,592 numbers) that only feeds the `[CLS]`-based `pooler_output`, and the mean-pooled head never uses that output. So the parameters that actually train are RoBERTa-base's 124,645,632 minus the pooler's 590,592, plus the 1,538 in the head, 124,056,578 in total.
 :::
 
 ::: {custom-style="Answer Text"}
@@ -580,7 +580,7 @@ Done in `classification.py`. The `head` branch of `forward` is the same as `full
 :::
 
 ::: {custom-style="Answer Text"}
-Answer: dev accuracy 0.6425 and test accuracy 0.6391, with learning rate 1e-3, 10 epochs, and batch 32. Following the footnote, I used a 50 times larger learning rate and more epochs than full fine-tuning. Only 1,538 parameters train. Dev accuracy crept from 0.625 after epoch 1 to 0.643 after epoch 9, and training accuracy only reached 0.658. That's 2 points above always-yes on dev (0.622) and 14 points below full fine-tuning.
+Answer: dev accuracy 0.6425 and test accuracy 0.6391, with learning rate 1e-3, 10 epochs, and batch 32. Following the footnote, I used a 50 times larger learning rate and more epochs than full fine-tuning. Only 1,538 parameters train. Dev accuracy crept from 0.624 after epoch 1 to 0.643 after epoch 9, and training accuracy only reached 0.658. That's 2 points above always-yes on dev (0.622) and 14 points below full fine-tuning.
 :::
 
 ::: {custom-style="Answer Text"}
@@ -643,11 +643,11 @@ I measured one training step of each method on RoBERTa-base with a real batch of
 | Forward, peak extra (MiB) | 3,068 | 138 | 5,612 |
 | Backward, net (MiB) | -2,544 | -0.1 | -5,359 |
 | Backward, peak extra (MiB) | 81 | 0.0 | 186 |
-| Held between steps: weights, gradients, AdamW state (MiB) | 1,484 | 494 | 495 |
+| Held between steps: weights and AdamW state (MiB) | 1,484 | 494 | 495 |
 :::
 
 ::: {custom-style="Answer Text"}
-Full fine-tuning saves 3,045 MiB of activations in the forward pass, because every layer's weights need a gradient, and each of those gradients needs that layer's inputs. The backward pass frees those activations and allocates gradients for all 124.6 million weights (about 475 MiB at 4 bytes each), so it nets out at 3,045 - 475 = 2,570 MiB freed, close to the 2,544 recorded. Its fixed cost is also the largest, 1,484 MiB, because AdamW keeps two extra numbers for every weight.
+Full fine-tuning saves 3,045 MiB of activations in the forward pass, because every layer's weights need a gradient, and each of those gradients needs that layer's inputs. The backward pass frees those activations and allocates gradients for the 124.06 million weights that train (about 473 MiB at 4 bytes each), so it nets out at 3,045 - 473 = 2,572 MiB freed, close to the 2,544 recorded. Its fixed cost is also the largest, 1,484 MiB, because AdamW keeps two extra numbers for every weight that trains. That's about 476 MiB of weights plus about 947 MiB of AdamW state, and I didn't track down the last 60 MiB or so. Gradients aren't part of it, because `zero_grad(set_to_none=True)` frees them at the end of each step.
 :::
 
 ::: {custom-style="Answer Text"}
@@ -655,7 +655,7 @@ Head-tuning needs almost nothing. Nothing before the classifier requires a gradi
 :::
 
 ::: {custom-style="Answer Text"}
-Prefix-tuning was the surprise. It trains about 100,000 parameters, so its fixed cost matches head-tuning, but its forward pass saves 5,360 MiB, 76% more than full fine-tuning. The gradient has to flow back through all 12 frozen layers to reach the prefix, so every layer's activations have to be kept, the same as in full fine-tuning. On top of that, the prefix doubles the sequence from 128 to 256 positions, which doubles most activations and quadruples the attention score matrices. Its backward pass frees almost exactly what the forward saved, because the only gradients it stores are for the prefix and the head (about 0.4 MiB). Peak use for one step is roughly 1,484 + 3,068 = 4,552 MiB for full fine-tuning and 495 + 5,612 = 6,107 MiB for prefix-tuning. The card has 6,141 MiB in total, and part of that goes to the CUDA context, so prefix-tuning at batch 32 doesn't fit in float32. I trained it at batch 16 with `--amp`, which stores most activations in bfloat16 at about half the size. (Batch 32 in bfloat16 still spilled into shared system memory.) So prefix-tuning saves gradient and optimizer memory, but at this prefix length it costs more activation memory than it saves.
+Prefix-tuning was the surprise. It trains about 100,000 parameters, so its fixed cost matches head-tuning, but its forward pass saves 5,360 MiB, 76% more than full fine-tuning. The gradient has to flow back through all 12 frozen layers to reach the prefix, so most of each layer's activations still have to be kept. The attention scores, the softmax outputs, and the inputs to GELU and LayerNorm are all needed to pass the gradient back. The inputs to the frozen linear layers aren't, because a frozen weight needs no gradient. On top of that, the prefix doubles the sequence from 128 to 256 positions, which doubles most activations and quadruples the attention score matrices. Its backward pass frees almost exactly what the forward saved, because the only gradients it stores are for the prefix and the head (about 0.4 MiB). Peak use for one step is roughly 1,484 + 3,068 = 4,552 MiB for full fine-tuning and 495 + 5,612 = 6,107 MiB for prefix-tuning. The card has 6,141 MiB in total, and part of that goes to the CUDA context, so prefix-tuning at batch 32 doesn't fit in float32. I trained it at batch 16 with `--amp`, which stores most activations in bfloat16 at about half the size. (Batch 32 in bfloat16 still spilled into shared system memory.) So prefix-tuning saves gradient and optimizer memory, but at this prefix length it costs more activation memory than it saves.
 :::
 
 5.  **LoRA** fine-tuning decomposes the parameter updates of a large dense matrix to two low-rank matrices. For a matrix $M$ of size $\mathbb{R}^{d \times d}$, the full updates require storing the gradients and optimizer states of $d \times d$ parameters.\
@@ -830,7 +830,7 @@ Answer: 21 of 30 correct, an accuracy of 0.700, with Qwen2.5-1.5B-Instruct stand
 :::
 
 ::: {custom-style="Answer Text"}
-For comparison, I ran the same prompt on the base model, Qwen2.5-1.5B, the stand-in for `davinci`. It got 19 of 30 (0.633), no better than always-yes on those questions. On all 3,270 it got 2,439 right, 0.746. It answered yes 1,710 times and no 1,557 times, so it leans toward no, and 3 completions didn't start with yes or no ("zone", "Caribbean is", and "Atlantic Ocean"). So instruction tuning added 3.2 points on the full set, 0.778 against 0.746. Most of the gain over always-yes (0.622) is already there in the base model, which says the eight demonstrations carry most of the task. The forced-choice accuracies tell the same story: 0.753 for the base model and 0.779 for Instruct.
+For comparison, I ran the same prompt on the base model, Qwen2.5-1.5B, the stand-in for `davinci`. It got 19 of 30 (0.633), no better than always-yes on those questions. On all 3,270 it got 2,439 right, 0.746. It answered yes 1,710 times and no 1,557 times, against 2,033 and 1,237 true, so it leans toward no. One possible reason, which I didn't test: the demonstrations alternate yes, no, yes, no, so every prompt ends on a no example, and a model that copies the most recent label would drift toward no. The Instruct model doesn't lean that way. Three base-model completions didn't start with yes or no ("zone", "Caribbean is", and "Atlantic Ocean"). So instruction tuning added 3.2 points on the full set, 0.778 against 0.746. Most of the gain over always-yes (0.622) is already there in the base model, which says the eight demonstrations carry most of the task. The forced-choice accuracies tell the same story: 0.753 for the base model and 0.779 for Instruct.
 :::
 
 ::: {custom-style="Answer Text"}

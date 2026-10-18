@@ -11,6 +11,8 @@ logs/*.err
 # styles taken from the assignment's Word file
 writeup/reference.docx
 writeup/*.log
+# the PDF lives at the repo root only
+writeup/*.pdf
 writeup/*.err
 hw6/*.png
 # Colab logs and plots, if downloaded from Drive (their numbers are in results/colab_runs.json)
