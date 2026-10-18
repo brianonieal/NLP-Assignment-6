@@ -90,7 +90,7 @@ python experiments/run_all.py            # every laptop training job (skips fini
 python experiments/profile_memory.py     # 3.2.4
 cd hw6
 python playground_prompts_local.py cuda  # 3.3.1 to 3.3.3
-python openai_gpt-boolq.py               # 3.3.4, 30 questions; --n_eval 0 for all 3,270
+python openai_gpt-boolq.py               # 3.3.4, 30 questions (add --n_eval 0 for all 3,270)
 cd ..
 python experiments/import_colab.py results/colab_runs.json
 python experiments/make_plots.py
