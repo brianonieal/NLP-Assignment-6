@@ -841,14 +841,6 @@ For comparison, I ran the same prompt on the base model, Qwen2.5-1.5B, the stand
 The 0.778 is the number that surprised me. With no training at all, eight examples in the prompt get a 1.5-billion-parameter model to within a point of full fine-tuning RoBERTa-base in 3.2.1 (0.786 on the same 3,270 questions) and ahead of LoRA (0.762). It isn't a fair fight in either direction. The Qwen model is twelve times larger than RoBERTa-base and was pretrained on far more text, and its instruction tuning may have included question answering much like BoolQ. I can't rule out that BoolQ itself was in its training data. On the other side, the fine-tuned models saw 8,000 labeled examples, and the prompt has 8.
 :::
 
-# Optional Feedback {#optional-feedback .unnumbered}
-
-Have feedback for this assignment? Found something confusing? We'd love to hear from you!
-
-::: {custom-style="Answer Text"}
-A few things I ran into, in case they help for next time. Section 3.3 depends on OpenAI models that were shut down on September 28, 2026, so it can't be done as written anymore. 3.2.6 says to copy `classification_base.py`, but the skeleton's file is `base_classification.py`. In `classification.py`, the comments refer to `mymodel.head`, but the attribute is `mymodel.classifier`, and the learning-rate scheduler is attached to the full fine-tuning optimizer even in head and prefix mode, so those two never warm up or decay.
-:::
-
 [^1]: Question credit: John Hewitt
 
 [^2]: <https://en.wikipedia.org/wiki/Linear_subspace>
