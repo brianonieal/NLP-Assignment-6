@@ -476,7 +476,7 @@ The four runs at 5e-4 and 1e-3 failed the same way. From the first epoch on they
 4.  **TODOs** Now repeat the previous experiment with other models. In particular, create a [bar plot](https://www.geeksforgeeks.org/bar-plot-in-matplotlib/) that shows test/dev accuracies for two of your favorite of the following models: `distilBERT-base-uncased, BERT-base-uncased, BERT-large-uncased, BERT-base-cased, BERT-large-cased, RoBERTa-base, RoBERTa-large`. Note, it is possible that some of these models wouldn't fit in your compute environment for any choice of batch size, in which case report 0 for their performance.
 
 ::: {custom-style="Answer Text"}
-I picked BERT-base-uncased and RoBERTa-base and ran the 3.1.3 grid for each (learning rates 1e-4, 5e-4, and 1e-3, times 7 and 9 epochs) with the same `base_classification.py`, seed, and data split. Each model's bars are its best run on dev, and I only looked at test for that run. distilBERT from 3.1.3 is there for reference. BERT-large-uncased gets 0, because on my 6 GB GPU it ran out of memory at batch size 1 in float32 (`results/batch_probe_bert-large-uncased.json`).
+I picked BERT-base-uncased and RoBERTa-base and ran the 3.1.3 grid for each (learning rates 1e-4, 5e-4, and 1e-3, times 7 and 9 epochs) with the same `base_classification.py`, seed, and data split. Each model's bars are its best run on dev, and I only looked at test for that run. distilBERT from 3.1.3 is there for reference.
 :::
 
 ::: {custom-style="Answer Text"}
@@ -489,7 +489,6 @@ I picked BERT-base-uncased and RoBERTa-base and ran the 3.1.3 grid for each (lea
 | distilBERT-base-uncased | 1e-4, 9 epochs | 0.7141 | 0.7057 |
 | BERT-base-uncased | 1e-4, 9 epochs | 0.7055 | 0.6734 |
 | RoBERTa-base | none, all 6 runs predict yes | 0.6217 | 0.6230 |
-| BERT-large-uncased | doesn't fit on my GPU | 0 | 0 |
 :::
 
 ::: {custom-style="Answer Text"}
@@ -508,7 +507,7 @@ All twelve runs for the two new models:
 :::
 
 ::: {custom-style="Answer Text"}
-Where the runs happened. By my estimate from the 3.2.1 run, the twelve runs would have taken my laptop about three and a half hours, even in bfloat16. So I ran both grids on a Google Colab L4 GPU, where each run took 5 to 7 minutes, with bfloat16 mixed precision (`--amp`) and batch 32. Batch 32 came from my laptop's memory probe. In bfloat16 the largest batch that fit on my 6 GB card was 69 for BERT-base and 66 for RoBERTa-base, too close to 64 to be safe, and I kept 32 on Colab so the setup didn't change with the hardware. The distilBERT runs were on my laptop in float32 at batch 64. So the bars differ in hardware, precision, and batch size as well as model. To check whether bfloat16 alone moves the numbers, I reran the selected distilBERT setting (1e-4, 9 epochs, batch 64) on my laptop with `--amp`. It scored 0.7208 on dev and 0.7085 on test, against 0.7141 and 0.7057 in float32, and ran in 6.7 minutes instead of 9.2. That's within 0.7 points, so bfloat16 isn't what separates the models here. BERT-large would fit on the L4's 24 GB, but I didn't run it there. On my own machine it doesn't fit, which is the case the question describes.
+Where the runs happened. By my estimate from the 3.2.1 run, the twelve runs would have taken my laptop about three and a half hours, even in bfloat16. So I ran both grids on a Google Colab L4 GPU, where each run took 5 to 7 minutes, with bfloat16 mixed precision (`--amp`) and batch 32. Batch 32 came from my laptop's memory probe. In bfloat16 the largest batch that fit on my 6 GB card was 69 for BERT-base and 66 for RoBERTa-base, too close to 64 to be safe, and I kept 32 on Colab so the setup didn't change with the hardware. The distilBERT runs were on my laptop in float32 at batch 64. So the bars differ in hardware, precision, and batch size as well as model. To check whether bfloat16 alone moves the numbers, I reran the selected distilBERT setting (1e-4, 9 epochs, batch 64) on my laptop with `--amp`. It scored 0.7208 on dev and 0.7085 on test, against 0.7141 and 0.7057 in float32, and ran in 6.7 minutes instead of 9.2. That's within 0.7 points, so bfloat16 isn't what separates the models here.
 :::
 
 ::: {custom-style="Answer Text"}
@@ -717,14 +716,11 @@ A note before 3.3. The OpenAI models this section names can't be called anymore.
     ```
 
 ::: {custom-style="Answer Text"}
-The Playground no longer exists, so there's no screenshot to paste. This is the completion as text, from `hw6/playground_prompts_local.py`. The full output is in `logs/playground_prompts_local.log` and `hw6/playground_prompts_local.json`. The prompt is exactly as given, decoding is greedy (temperature 0), and the limit is 80 new tokens, with a stop at a blank line. Qwen2.5-1.5B-Instruct, standing in for `gpt-3.5-turbo-instruct`, continued it like this (the prompt, then the completion):
+The Playground no longer exists, so this is a screenshot of the console output from `hw6/playground_prompts_local.py` instead. The same text is in `logs/playground_prompts_local.log` and `hw6/playground_prompts_local.json`. The prompt is exactly as given, decoding is greedy (temperature 0), and the limit is 80 new tokens, with a stop at a blank line. The answer is the middle block, from Qwen2.5-1.5B-Instruct, standing in for `gpt-3.5-turbo-instruct`. In each block, "[prompt]" stands for the prompt, and the text after it is the completion. The first block is the base model and the last is the same prompt as a chat turn, both discussed below.
 :::
 
 ::: {custom-style="Answer Text"}
-```
-Trevor Adriaanse's course on "self-supervised model" at Johns Hopkins is a great example of how to use the power of self-supervised learning for image classification. The goal of this project was to classify images into 10 different categories, using only unlabeled data.
-The dataset used in this project consists of 256x256 RGB images from the CIFAR-10 dataset. Each image has been randomly cropped and resized to fit within a square region of size
-```
+![Console output for 3.3.1 (`plots/3.3.1_terminal.png`).](plots/3.3.1_terminal.png){width="6.3in"}
 :::
 
 ::: {custom-style="Answer Text"}

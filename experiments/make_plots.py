@@ -75,11 +75,7 @@ def model_comparison(results):
         ("BERT-base-uncased", "3.1.4_grid_bert-base-uncased", False),
         ("RoBERTa-base", "3.1.4_grid_roberta-base", False),
         ("RoBERTa-base, outside\nthe grid", "3.1.4_extra_roberta-base", True),
-        ("BERT-large-uncased", None, False),
     ):
-        if prefix is None:
-            rows.append((label, 0.0, 0.0, "out of memory at batch 1\non my 6 GB GPU (reported 0)", False))
-            continue
         name, r = best_by_dev(results, prefix)
         if r is None:
             continue
@@ -92,25 +88,24 @@ def model_comparison(results):
 
     x = np.arange(len(rows))
     w = 0.34
-    fig, ax = plt.subplots(figsize=(10.4, 4.8))
+    fig, ax = plt.subplots(figsize=(9.2, 4.8))
     for i, (label, dev, test, cfg, extra) in enumerate(rows):
         for off, h, c, lab in ((-w / 2 - 0.01, dev, C1, "dev (BoolQ validation, 3,270)"),
                                (w / 2 + 0.01, test, C2, "test (train[8000:], 1,427)")):
             style = dict(color="white", edgecolor=c, hatch="////", linewidth=1.2) if extra else dict(color=c)
             ax.bar(i + off, h, w, label=lab if i == 0 else None, **style)
-            ax.text(i + off, h + 0.008, f"{h:.3f}" if h > 0 else "0", ha="center", va="bottom",
+            ax.text(i + off, h + 0.008, f"{h:.3f}", ha="center", va="bottom",
                     fontsize=8.5, color=INK)
     majority = results.get("_majority_dev")
     if majority:
-        ax.axhline(majority, color=INK2, linewidth=1, linestyle=(0, (4, 3)))
-        ax.text(len(rows) - 0.5, majority + 0.008, f"always 'yes' on dev = {majority:.3f}",
-                ha="right", va="bottom", fontsize=8, color=INK2)
+        ax.axhline(majority, color=INK2, linewidth=1, linestyle=(0, (4, 3)),
+                   label=f"always 'yes' on dev = {majority:.3f}")
     ax.set_xticks(x, [f"{r[0]}\n{r[3]}" for r in rows], fontsize=8)
     ax.set_ylim(0, 1.0)
     ax.set_ylabel("accuracy")
     ax.set_title("Full fine-tuning on BoolQ: best of the 6 learning rate x epoch runs per model, picked on dev\n"
                  "(hatched: a run outside the grid, lr 2e-5)", fontsize=10, color=INK)
-    ax.legend(loc="upper right", fontsize=8.5, ncols=2)
+    ax.legend(loc="upper left", fontsize=8.5, ncols=3)
     fig.tight_layout()
     fig.savefig(os.path.join(PLOTS, "3.1.4_model_comparison.png"), dpi=170)
     plt.close(fig)

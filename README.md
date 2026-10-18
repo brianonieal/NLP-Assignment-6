@@ -46,7 +46,6 @@ All accuracies are on BoolQ. Dev is the 3,270-question validation split. Test is
 | 3.1.4 | BERT-base-uncased, best of 6 (lr 1e-4, 9 epochs) | 0.7055 | 0.6734 |
 | 3.1.4 | RoBERTa-base, all 6 runs predict yes | 0.6217 | 0.6230 |
 | 3.1.4 | RoBERTa-base, lr 2e-5, 9 epochs (outside the grid) | 0.7636 | 0.7477 |
-| 3.1.4 | BERT-large-uncased, out of memory at batch 1 on my 6 GB GPU | 0 | 0 |
 | 3.2.1 | RoBERTa-base, full fine-tuning, mean-pooled head, lr 2e-5, 6 epochs | 0.7856 | 0.7730 |
 | 3.2.2 | RoBERTa-base, head-tuning (1,538 parameters), lr 1e-3, 10 epochs | 0.6425 | 0.6391 |
 | 3.2.3 | RoBERTa-base, prefix-tuning (99,842 parameters), lr 5e-3, 10 epochs | 0.6550 | 0.6580 |
