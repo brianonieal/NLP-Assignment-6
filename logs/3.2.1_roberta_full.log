@@ -1,0 +1,78 @@
+$ python classification.py --device cuda --model roberta-base --type full --batch_size 32 --lr 2e-05 --num_epochs 6
+Specified arguments: Namespace(small_subset=False, num_epochs=6, lr=2e-05, batch_size=32, device='cuda', model='roberta-base', type='full', prefix_length=128, seed=42)
+Loading the dataset ...
+Slicing the data...
+Size of the loaded dataset:
+ - train: 8000
+ - dev: 3270
+ - test: 1427
+Loading the tokenizer...
+Loding the data into DS...
+ >>>>>>>> Initializing the data loaders ... 
+Loading the model ...
+Moving model to device ...cuda
+ >>>>>>>>  Starting training ... 
+ >>>>>>>>  Initializing optimizer
+Tuned parameters (full): 124745474
+Epoch 1 training:
+ ===> Epoch 1
+ - Average training metrics: accuracy={'accuracy': 0.66325}
+ - Average validation metrics: accuracy={'accuracy': 0.7137614678899082}
+ - Average test metrics: accuracy={'accuracy': 0.6993693062368606}
+Epoch 1 took 127.89856743812561 seconds
+Epoch 2 training:
+ ===> Epoch 2
+ - Average training metrics: accuracy={'accuracy': 0.774375}
+ - Average validation metrics: accuracy={'accuracy': 0.7691131498470948}
+ - Average test metrics: accuracy={'accuracy': 0.7400140154169587}
+Epoch 2 took 126.13517165184021 seconds
+Epoch 3 training:
+ ===> Epoch 3
+ - Average training metrics: accuracy={'accuracy': 0.856625}
+ - Average validation metrics: accuracy={'accuracy': 0.7434250764525994}
+ - Average test metrics: accuracy={'accuracy': 0.7281009110021023}
+Epoch 3 took 368.5624096393585 seconds
+Epoch 4 training:
+ ===> Epoch 4
+ - Average training metrics: accuracy={'accuracy': 0.9105}
+ - Average validation metrics: accuracy={'accuracy': 0.7764525993883792}
+ - Average test metrics: accuracy={'accuracy': 0.7610371408549405}
+Epoch 4 took 124.56399273872375 seconds
+Epoch 5 training:
+ ===> Epoch 5
+ - Average training metrics: accuracy={'accuracy': 0.944375}
+ - Average validation metrics: accuracy={'accuracy': 0.7798165137614679}
+ - Average test metrics: accuracy={'accuracy': 0.7603363700070077}
+Epoch 5 took 127.1459572315216 seconds
+Epoch 6 training:
+ ===> Epoch 6
+ - Average training metrics: accuracy={'accuracy': 0.963875}
+ - Average validation metrics: accuracy={'accuracy': 0.7856269113149847}
+ - Average test metrics: accuracy={'accuracy': 0.7729502452697968}
+Epoch 6 took 126.95244669914246 seconds
+torch.cuda.memory_allocated: 0.482650GB
+torch.cuda.memory_reserved: 4.699219GB
+torch.cuda.max_memory_reserved: 4.699219GB
+Sun Oct 18 10:53:11 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 591.86                 Driver Version: 591.86         CUDA Version: 13.1     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                  Driver-Model | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GeForce RTX 4050 ...  WDDM  |   00000000:01:00.0 Off |                  N/A |
+| N/A   73C    P0             47W /   50W |    4867MiB /   6141MiB |     82%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|    0   N/A  N/A           38716      C   ...am Files\Python311\python.exe      N/A      |
++-----------------------------------------------------------------------------------------+
+
+ - Average DEV metrics: accuracy={'accuracy': 0.7856269113149847}
+ - Average TEST metrics: accuracy={'accuracy': 0.7729502452697968}

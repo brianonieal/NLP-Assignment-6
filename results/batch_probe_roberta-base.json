@@ -1,0 +1,44 @@
+{
+  "model": "roberta-base",
+  "max_len": 128,
+  "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "gpu_gib": 5.99658203125,
+  "largest_batch": 46,
+  "trials": {
+    "32": {
+      "fits": true,
+      "peak_allocated_gib": 4.506761074066162,
+      "seconds_per_step": 0.5288350582122803
+    },
+    "40": {
+      "fits": true,
+      "peak_allocated_gib": 5.264052867889404,
+      "seconds_per_step": 0.6656501293182373
+    },
+    "44": {
+      "fits": true,
+      "peak_allocated_gib": 5.635615825653076,
+      "seconds_per_step": 1.1132566928863525
+    },
+    "46": {
+      "fits": true,
+      "peak_allocated_gib": 5.852159023284912,
+      "seconds_per_step": 1.8812894821166992
+    },
+    "47": {
+      "fits": false,
+      "peak_allocated_gib": null,
+      "seconds_per_step": null
+    },
+    "48": {
+      "fits": false,
+      "peak_allocated_gib": null,
+      "seconds_per_step": null
+    },
+    "64": {
+      "fits": false,
+      "peak_allocated_gib": null,
+      "seconds_per_step": null
+    }
+  }
+}

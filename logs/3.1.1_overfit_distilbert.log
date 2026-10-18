@@ -1,0 +1,121 @@
+$ python base_classification.py --small_subset --device cuda --model distilbert-base-uncased --batch_size 64 --lr 0.0001 --num_epochs 20
+Specified arguments: Namespace(small_subset=True, num_epochs=20, lr=0.0001, batch_size=64, device='cuda', model='distilbert-base-uncased', seed=42)
+Loading the dataset ...
+Slicing the data...
+Size of the loaded dataset:
+ - train: 10
+ - dev: 10
+ - test: 10
+Loading the tokenizer...
+Loding the data into DS...
+ >>>>>>>> Initializing the data loaders ... 
+Loading the model ...
+Moving model to device ...cuda
+ >>>>>>>>  Starting training ... 
+ >>>>>>>>  Initializing optimizer
+Epoch 1 training:
+ ===> Epoch 1
+ - Average training metrics: accuracy={'accuracy': 0.6}
+ - Average validation metrics: accuracy={'accuracy': 0.5}
+Epoch 2 training:
+ ===> Epoch 2
+ - Average training metrics: accuracy={'accuracy': 0.7}
+ - Average validation metrics: accuracy={'accuracy': 0.5}
+Epoch 3 training:
+ ===> Epoch 3
+ - Average training metrics: accuracy={'accuracy': 0.3}
+ - Average validation metrics: accuracy={'accuracy': 0.5}
+Epoch 4 training:
+ ===> Epoch 4
+ - Average training metrics: accuracy={'accuracy': 0.7}
+ - Average validation metrics: accuracy={'accuracy': 0.7}
+Epoch 5 training:
+ ===> Epoch 5
+ - Average training metrics: accuracy={'accuracy': 0.4}
+ - Average validation metrics: accuracy={'accuracy': 0.9}
+Epoch 6 training:
+ ===> Epoch 6
+ - Average training metrics: accuracy={'accuracy': 0.7}
+ - Average validation metrics: accuracy={'accuracy': 1.0}
+Epoch 7 training:
+ ===> Epoch 7
+ - Average training metrics: accuracy={'accuracy': 0.8}
+ - Average validation metrics: accuracy={'accuracy': 1.0}
+Epoch 8 training:
+ ===> Epoch 8
+ - Average training metrics: accuracy={'accuracy': 0.8}
+ - Average validation metrics: accuracy={'accuracy': 1.0}
+Epoch 9 training:
+ ===> Epoch 9
+ - Average training metrics: accuracy={'accuracy': 0.8}
+ - Average validation metrics: accuracy={'accuracy': 1.0}
+Epoch 10 training:
+ ===> Epoch 10
+ - Average training metrics: accuracy={'accuracy': 1.0}
+ - Average validation metrics: accuracy={'accuracy': 1.0}
+Epoch 11 training:
+ ===> Epoch 11
+ - Average training metrics: accuracy={'accuracy': 1.0}
+ - Average validation metrics: accuracy={'accuracy': 1.0}
+Epoch 12 training:
+ ===> Epoch 12
+ - Average training metrics: accuracy={'accuracy': 1.0}
+ - Average validation metrics: accuracy={'accuracy': 1.0}
+Epoch 13 training:
+ ===> Epoch 13
+ - Average training metrics: accuracy={'accuracy': 1.0}
+ - Average validation metrics: accuracy={'accuracy': 1.0}
+Epoch 14 training:
+ ===> Epoch 14
+ - Average training metrics: accuracy={'accuracy': 1.0}
+ - Average validation metrics: accuracy={'accuracy': 1.0}
+Epoch 15 training:
+ ===> Epoch 15
+ - Average training metrics: accuracy={'accuracy': 1.0}
+ - Average validation metrics: accuracy={'accuracy': 1.0}
+Epoch 16 training:
+ ===> Epoch 16
+ - Average training metrics: accuracy={'accuracy': 1.0}
+ - Average validation metrics: accuracy={'accuracy': 1.0}
+Epoch 17 training:
+ ===> Epoch 17
+ - Average training metrics: accuracy={'accuracy': 1.0}
+ - Average validation metrics: accuracy={'accuracy': 1.0}
+Epoch 18 training:
+ ===> Epoch 18
+ - Average training metrics: accuracy={'accuracy': 1.0}
+ - Average validation metrics: accuracy={'accuracy': 1.0}
+Epoch 19 training:
+ ===> Epoch 19
+ - Average training metrics: accuracy={'accuracy': 1.0}
+ - Average validation metrics: accuracy={'accuracy': 1.0}
+Epoch 20 training:
+ ===> Epoch 20
+ - Average training metrics: accuracy={'accuracy': 1.0}
+ - Average validation metrics: accuracy={'accuracy': 1.0}
+torch.cuda.memory_allocated: 0.266355GB
+torch.cuda.memory_reserved: 1.449219GB
+torch.cuda.max_memory_reserved: 1.449219GB
+Sun Oct 18 09:01:06 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 591.86                 Driver Version: 591.86         CUDA Version: 13.1     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                  Driver-Model | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GeForce RTX 4050 ...  WDDM  |   00000000:01:00.0 Off |                  N/A |
+| N/A   53C    P3             10W /   53W |    1595MiB /   6141MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|    0   N/A  N/A           41328      C   ...am Files\Python311\python.exe      N/A      |
++-----------------------------------------------------------------------------------------+
+
+ - Average DEV metrics: accuracy={'accuracy': 1.0}
+ - Average TEST metrics: accuracy={'accuracy': 1.0}

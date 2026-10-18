@@ -1,0 +1,46 @@
+{
+  "model": "roberta-base",
+  "batch_size": 32,
+  "max_len": 128,
+  "prefix_length": 128,
+  "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "torch": "2.2.1+cu121",
+  "results": {
+    "full": {
+      "forward": {
+        "profiler_net_mib": 3044.533203125,
+        "peak_above_start_mib": 3068.453125
+      },
+      "backward": {
+        "profiler_net_mib": -2544.43505859375,
+        "peak_above_start_mib": 80.89013671875
+      },
+      "static_mib_weights_grads_optimizer": 1484.4912109375,
+      "trainable_parameters": 124745474
+    },
+    "head": {
+      "forward": {
+        "profiler_net_mib": 0.095703125,
+        "peak_above_start_mib": 138.015625
+      },
+      "backward": {
+        "profiler_net_mib": -0.08837890625,
+        "peak_above_start_mib": 0.00634765625
+      },
+      "static_mib_weights_grads_optimizer": 493.8154296875,
+      "trainable_parameters": 1538
+    },
+    "prefix": {
+      "forward": {
+        "profiler_net_mib": 5359.658203125,
+        "peak_above_start_mib": 5611.6875
+      },
+      "backward": {
+        "profiler_net_mib": -5359.27587890625,
+        "peak_above_start_mib": 185.849609375
+      },
+      "static_mib_weights_grads_optimizer": 494.5654296875,
+      "trainable_parameters": 99842
+    }
+  }
+}

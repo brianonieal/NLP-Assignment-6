@@ -5,3 +5,10 @@ openai==1.12.0
 torch==2.2.1
 transformers==4.38.1
 scikit-learn
+# Added for this submission (see the README):
+peft==0.10.0          # classification_lora.py, Section 3.2.6
+accelerate==0.27.2    # required by peft
+numpy<2               # torch 2.2.1 is built against NumPy 1.x
+pyarrow==15.0.2       # datasets 2.17.1 fails to import with current pyarrow
+pandas==2.2.1         # same reason
+httpx<0.28            # openai 1.12.0 fails with httpx 0.28 and later

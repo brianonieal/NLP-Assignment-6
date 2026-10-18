@@ -1,0 +1,30 @@
+﻿2026-10-18T11:22:08  waiting for 3.2.3_roberta_prefix
+2026-10-18T11:22:33  stopping the first driver
+2026-10-18T11:22:33    stopped 25412
+2026-10-18T11:22:33    stopped 34268
+2026-10-18T11:22:33    stopped 16416
+2026-10-18T11:22:38  bf16 batch probe bert-base-uncased
+2026-10-18T11:34:15  restarted after the case-insensitive wait bug; prefix rerun in bf16
+2026-10-18T11:34:15  bf16 batch probe bert-base-uncased
+2026-10-18T11:34:57  bf16 batch probe roberta-base
+2026-10-18T11:35:37  driver 2 start
+2026-10-18T11:40:57  stopped to benchmark float32 vs bf16
+2026-10-18T11:44:34  restarted: bf16 for all remaining runs, prefix at batch 16
+2026-10-18T11:44:35  bf16 batch probe bert-base-uncased
+2026-10-18T11:45:14  bf16 batch probe roberta-base
+2026-10-18T11:45:55  driver 2 start
+2026-10-18T12:12:05  stop_after_check watcher started (3.1.4 grids moved to Colab L4)
+2026-10-18T12:53:40  driver 2 done
+2026-10-18T12:53:40  stop_after_check: stopped 25136
+2026-10-18T12:53:40  stop_after_check: stopped 41992
+2026-10-18T12:53:40  stop_after_check: stopped 11592
+2026-10-18T12:53:40  stop_after_check: stopped 42340
+2026-10-18T12:53:40  stop_after_check: stopped 18468
+2026-10-18T12:54:08  3.3.4 Qwen2.5-1.5B-Instruct, 30 questions
+2026-10-18T12:54:34  3.3.4 Qwen2.5-1.5B-Instruct, all 3,270 validation questions
+2026-10-18T13:10:20  3.3.4 Qwen2.5-1.5B, 30 questions
+2026-10-18T13:10:50  3.3.4 Qwen2.5-1.5B, all 3,270 validation questions
+2026-10-18T13:27:58  plots
+2026-10-18T13:28:07  ALL DONE
+2026-10-18T13:28:12  3.3.1-3.3.3 prompts again, with the chat-template pass
+2026-10-18T13:28:40  after_queue done

@@ -1,0 +1,18 @@
+25 jobs
+skip 3.1.1_overfit_distilbert (already done)
+skip 3.1.2_full30_distilbert (already done)
+skip 3.1.3_grid_distilbert_lr0.0001_ep7 (already done)
+skip 3.1.3_grid_distilbert_lr0.0001_ep9 (already done)
+skip 3.1.3_grid_distilbert_lr0.0005_ep7 (already done)
+skip 3.1.3_grid_distilbert_lr0.0005_ep9 (already done)
+skip 3.1.3_grid_distilbert_lr0.001_ep7 (already done)
+skip 3.1.3_grid_distilbert_lr0.001_ep9 (already done)
+skip 3.2.1_roberta_full (already done)
+skip 3.2.2_roberta_head (already done)
+run  3.2.3_roberta_prefix: classification.py --device cuda --model roberta-base --type prefix --batch_size 16 --lr 0.005 --num_epochs 10 --amp
+     ok in 47.5 min; final dev=0.655045871559633 test=0.6580238262088297
+run  3.2.6_roberta_lora: classification_lora.py --device cuda --model roberta-base --batch_size 32 --lr 0.0005 --num_epochs 6 --lora_r 8 --lora_alpha 16 --amp
+     ok in 13.2 min; final dev=0.7617737003058104 test=0.7540294323756132
+run  3.1.4_check_distilbert_amp_lr0.0001_ep9: base_classification.py --device cuda --model distilbert-base-uncased --batch_size 64 --lr 0.0001 --num_epochs 9 --amp
+     ok in 6.7 min; final dev=0.7207951070336391 test=0.708479327259986
+run  3.1.4_grid_bert-base-uncased_lr0.0001_ep7: base_classification.py --device cuda --model bert-base-uncased --batch_size 32 --lr 0.0001 --num_epochs 7 --amp

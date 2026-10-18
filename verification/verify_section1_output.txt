@@ -1,0 +1,35 @@
+
+==============================================================================
+Q1  BERT sentence pair
+==============================================================================
+tokens         : ['[CLS]', 'the', 'cat', 'sat', 'on', 'the', 'mat', '.', '[SEP]', 'it', 'was', 'very', 'comfortable', '.', '[SEP]']
+token_type_ids : [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1]
+
+==============================================================================
+Q3  BPE on a toy corpus
+==============================================================================
+vocabulary after training (id order): ['[UNK]', 'b', 'g', 'h', 'n', 'p', 's', 'u', 'ug', 'un', 'hug', 'pun', 'pug', 'hugs']
+learned merges in order: ['u g', 'u n', 'h ug', 'p un', 'p ug', 'hug s']
+adjacent character pair counts before any merge: {'ug': 20, 'pu': 17, 'un': 16, 'hu': 15, 'gs': 5, 'bu': 4}
+encode 'hugs' : ['hugs']
+encode 'bug'  : ['b', 'ug'] (not seen in training; falls back to characters plus merges)
+
+==============================================================================
+Q4  Masked language modeling labels
+==============================================================================
+position  2: original      hopkins  input       [MASK]  label hopkins
+position  3: original   university  input      moniker  label university
+position 12: original           in  input       [MASK]  label in
+positions with label -100 (ignored by the loss): 25 of 28
+label equals the original token at every non-ignored position: True
+
+==============================================================================
+Q6  The code from the question
+==============================================================================
+keys passed to the model : ['input_ids', 'token_type_ids', 'attention_mask']
+it ran, output shape     : (1, 4, 768)
+ids from the BERT tokenizer      : [101, 4403, 106, 102]
+what BERT meant by them          : ['[CLS]', 'Hey', '!', '[SEP]']
+what GPT-2 reads for the same ids: ['¨', 'ĠBig', '®', '©']
+what GPT-2's own tokenizer gives : [10814, 0] ['Hey', '!']
+vocab sizes: bert-base-cased 28996 | gpt2 50257

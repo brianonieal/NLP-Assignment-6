@@ -1,3 +1,8 @@
+# GenAI disclosure: Claude (Anthropic, model claude-opus-5-5) completed the TODOs in this
+# file (evaluate_model and the training loop in train) and added the --seed, --amp, and
+# --amp_dtype arguments marked "Added" below. Everything else is the course skeleton as
+# shipped. I directed the work, ran the experiments through Claude on my own GPU and on a
+# Google Colab GPU, and reviewed the code.
 import torch
 from torch.utils.data import DataLoader
 from transformers import AutoTokenizer
@@ -10,6 +15,13 @@ from transformers import AutoModelForSequenceClassification
 import argparse
 import subprocess
 import matplotlib.pyplot as plt
+
+# Added: mixed precision, switched on with --amp. Off by default, so a plain run is the
+# skeleton's float32 training. --amp_dtype fp16 is for GPUs without bfloat16 (e.g. a T4) and
+# uses loss scaling.
+AMP = False
+AMP_DTYPE = torch.bfloat16
+SCALER = None
 
 def print_gpu_memory():
     """
@@ -98,10 +110,14 @@ def evaluate_model(model, dataloader, device):
         # Hints:
         # - see the getitem function in the BoolQADataset class for how to access the input_ids and attention_mask
         # - use to() to move the tensors to the device
-
+        input_ids = batch['input_ids'].to(device)
+        attention_mask = batch['attention_mask'].to(device)
 
         # forward pass
         # name the output as `output`
+        # no_grad: evaluation needs no gradients, and skipping them saves GPU memory
+        with torch.no_grad(), torch.autocast(device_type="cuda", dtype=AMP_DTYPE, enabled=AMP):  # autocast added for --amp
+            output = model(input_ids=input_ids, attention_mask=attention_mask)
 
         # your code ends here
 
@@ -174,22 +190,37 @@ def train(mymodel, num_epochs, train_dataloader, validation_dataloader, test_dat
 
             # get the input_ids, attention_mask, and labels from the batch and put them on the device
             # Hints: similar to the evaluate_model function
-
+            input_ids = batch['input_ids'].to(device)
+            attention_mask = batch['attention_mask'].to(device)
+            labels = batch['labels'].to(device)
 
             # forward pass
             # name the output as `output`
             # Hints: refer to the evaluate_model function on how to get the predictions (logits)
+            with torch.autocast(device_type="cuda", dtype=AMP_DTYPE, enabled=AMP):  # Added: --amp
+                output = mymodel(input_ids=input_ids, attention_mask=attention_mask)
+                predictions = output.logits
 
-
-            # compute the loss using the loss function
-
+                # compute the loss using the loss function
+                # (named model_loss so it doesn't overwrite `loss`, the CrossEntropyLoss object)
+                model_loss = loss(predictions, labels)
 
             # loss backward
-
+            if SCALER is not None:  # Added: fp16 needs loss scaling
+                SCALER.scale(model_loss).backward()
+            else:
+                model_loss.backward()
 
             # update the model parameters with optimizer and lr_scheduler step
+            if SCALER is not None:  # Added: unscales, skips the step if gradients overflowed
+                SCALER.step(optimizer)
+                SCALER.update()
+            else:
+                optimizer.step()
+            lr_scheduler.step()
 
             # zero the gradients
+            optimizer.zero_grad()
 
             # your code ends here
 
@@ -223,11 +254,13 @@ def train(mymodel, num_epochs, train_dataloader, validation_dataloader, test_dat
     save_path = "overfit.png" if small_subset else "base_full.png"
     plt.savefig(save_path)
 
-def pre_process(model_name, batch_size, device, small_subset):
+def pre_process(model_name, batch_size, device, small_subset, seed=None):
     # download dataset
     print("Loading the dataset ...")
     dataset = load_dataset("boolq")
-    dataset = dataset.shuffle()  # shuffle the data
+    # Added: a fixed seed, so every run in the hyper-parameter search sees the same
+    # train/test split. The skeleton's unseeded shuffle drew a new split on every run.
+    dataset = dataset.shuffle(seed=seed)  # shuffle the data
 
     print("Slicing the data...")
     if small_subset:
@@ -301,17 +334,27 @@ if __name__ == "__main__":
     parser.add_argument("--batch_size", type=int, default=32)
     parser.add_argument("--device", type=str, default="cuda")
     parser.add_argument("--model", type=str, default="distilbert-base-uncased")
+    # Added: seed for the data shuffle and for torch (classifier init, dropout)
+    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--amp", action="store_true", help="mixed precision (Added)")
+    parser.add_argument("--amp_dtype", choices=["bf16", "fp16"], default="bf16")  # Added
 
     args = parser.parse_args()
     print(f"Specified arguments: {args}")
 
     assert type(args.small_subset) == bool, "small_subset must be a boolean"
+    torch.manual_seed(args.seed)  # Added
+    AMP = args.amp  # Added: module-level flag read by train() and evaluate_model()
+    if AMP and args.amp_dtype == "fp16":  # Added
+        AMP_DTYPE = torch.float16
+        SCALER = torch.cuda.amp.GradScaler()
 
     # load the data and models
     pretrained_model, train_dataloader, validation_dataloader, test_dataloader = pre_process(args.model,
                                                                                              args.batch_size,
                                                                                              args.device,
-                                                                                             args.small_subset)
+                                                                                             args.small_subset,
+                                                                                             args.seed)
     print(" >>>>>>>>  Starting training ... ")
     train(pretrained_model, args.num_epochs, train_dataloader, validation_dataloader, test_dataloader, args.device, args.lr, args.small_subset)
     

@@ -1,0 +1,67 @@
+$ python classification_lora.py --device cuda --model roberta-base --batch_size 32 --lr 0.0005 --num_epochs 6 --lora_r 8 --lora_alpha 16 --amp
+Specified arguments: Namespace(small_subset=False, num_epochs=6, lr=0.0005, batch_size=32, device='cuda', model='roberta-base', seed=42, amp=True, lora_r=8, lora_alpha=16, lora_dropout=0.1)
+Loading the dataset ...
+Slicing the data...
+Size of the loaded dataset:
+ - train: 8000
+ - dev: 3270
+ - test: 1427
+Loading the tokenizer...
+Loding the data into DS...
+ >>>>>>>> Initializing the data loaders ... 
+Loading the model ...
+trainable params: 887,042 || all params: 125,534,212 || trainable%: 0.7066137476531099
+LoRA trainable parameters: 887042 total, 294912 in the LoRA A and B matrices, 592130 in the classification head
+Moving model to device ...cuda
+ >>>>>>>>  Starting training ... 
+ >>>>>>>>  Initializing optimizer
+Epoch 1 training:
+ ===> Epoch 1
+ - Average training metrics: accuracy={'accuracy': 0.632375}
+ - Average validation metrics: accuracy={'accuracy': 0.6883792048929663}
+Epoch 2 training:
+ ===> Epoch 2
+ - Average training metrics: accuracy={'accuracy': 0.713375}
+ - Average validation metrics: accuracy={'accuracy': 0.7238532110091743}
+Epoch 3 training:
+ ===> Epoch 3
+ - Average training metrics: accuracy={'accuracy': 0.75175}
+ - Average validation metrics: accuracy={'accuracy': 0.7547400611620795}
+Epoch 4 training:
+ ===> Epoch 4
+ - Average training metrics: accuracy={'accuracy': 0.786875}
+ - Average validation metrics: accuracy={'accuracy': 0.7565749235474006}
+Epoch 5 training:
+ ===> Epoch 5
+ - Average training metrics: accuracy={'accuracy': 0.806}
+ - Average validation metrics: accuracy={'accuracy': 0.7587155963302752}
+Epoch 6 training:
+ ===> Epoch 6
+ - Average training metrics: accuracy={'accuracy': 0.827625}
+ - Average validation metrics: accuracy={'accuracy': 0.7617737003058104}
+torch.cuda.memory_allocated: 0.484735GB
+torch.cuda.memory_reserved: 2.332031GB
+torch.cuda.max_memory_reserved: 2.332031GB
+Sun Oct 18 12:46:17 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 591.86                 Driver Version: 591.86         CUDA Version: 13.1     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                  Driver-Model | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GeForce RTX 4050 ...  WDDM  |   00000000:01:00.0 Off |                  N/A |
+| N/A   76C    P0             47W /   50W |    2505MiB /   6141MiB |     75%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|    0   N/A  N/A           19836      C   ...am Files\Python311\python.exe      N/A      |
++-----------------------------------------------------------------------------------------+
+
+ - Average DEV metrics: accuracy={'accuracy': 0.7617737003058104}
+ - Average TEST metrics: accuracy={'accuracy': 0.7540294323756132}

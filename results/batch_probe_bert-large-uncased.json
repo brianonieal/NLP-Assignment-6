@@ -1,0 +1,14 @@
+{
+  "model": "bert-large-uncased",
+  "max_len": 128,
+  "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "gpu_gib": 5.99658203125,
+  "largest_batch": 0,
+  "trials": {
+    "1": {
+      "fits": false,
+      "peak_allocated_gib": null,
+      "seconds_per_step": null
+    }
+  }
+}

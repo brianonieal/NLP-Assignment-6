@@ -1,0 +1,32 @@
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+model: Qwen/Qwen2.5-1.5B (local backend)
+Demonstrations (train indices, from 7206 passages of <= 120 words):
+   6605  yes  are canadian geese protected in the united states
+   7314  no   is st patrick's day a scottish holiday
+   7206  yes  does orlando bloom play legolas in the hobbit
+   6946  no   is a heat engine and heat pump the same thing
+    673  yes  is part of niagara falls in new york
+   5808  no   is there a train station at burnham on sea
+   4443  yes  is it possible to send a letter without return address
+   4255  no   is blue cross blue shield the same as independence blue cross
+[ 250/3270] gold=yes completion=' yes'   correct  (1080 prompt tokens)
+[ 500/3270] gold=no  completion=' yes'   WRONG  (1078 prompt tokens)
+[ 750/3270] gold=yes completion=' yes'   correct  (1006 prompt tokens)
+[1000/3270] gold=yes completion=' yes'   correct  (1001 prompt tokens)
+[1250/3270] gold=yes completion=' yes'   correct  (1011 prompt tokens)
+[1500/3270] gold=yes completion=' yes'   correct  (1011 prompt tokens)
+[1750/3270] gold=no  completion=' no'    correct  (982 prompt tokens)
+[2000/3270] gold=no  completion=' no'    correct  (1272 prompt tokens)
+[2250/3270] gold=yes completion=' yes'   correct  (1011 prompt tokens)
+[2500/3270] gold=no  completion=' no'    correct  (1088 prompt tokens)
+[2750/3270] gold=yes completion=' no'    WRONG  (1128 prompt tokens)
+[3000/3270] gold=yes completion=' yes'   correct  (1182 prompt tokens)
+[3250/3270] gold=yes completion=' yes'   correct  (1143 prompt tokens)
+[3270/3270] gold=no  completion=' no'    correct  (1083 prompt tokens)
+
+accuracy = 2439/3270 = 0.7459
+forced-choice accuracy (higher of P(' yes'), P(' no')) = 2463/3270 = 0.7532
+gold labels: 2033 yes, 1237 no (always-yes baseline = 0.6217)
+predicted yes: 1710, predicted no: 1557, unparseable: 3
+time: 1010.4 s
+saved ..\results\boolq_fewshot_Qwen2.5-1.5B_all.json

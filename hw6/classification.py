@@ -1,7 +1,14 @@
+# GenAI disclosure: Claude (Anthropic, model claude-opus-5-5) completed the TODOs in this
+# file (the full, head, and prefix branches of forward, the head and prefix optimizers,
+# evaluate_model, and the training loop) and made the changes outside the TODOs marked
+# "Added" below (the --seed and --amp arguments, a printed count of tuned parameters, a
+# .type attribute on the --type auto model, and pointing the learning rate scheduler at the
+# optimizer that actually steps). Everything else is the course skeleton as shipped. I directed the work, ran the experiments on my own GPU
+# through Claude, and reviewed the code.
 import torch
 from torch.utils.data import DataLoader
 from transformers import AutoTokenizer
-import torch.nn as nn 
+import torch.nn as nn
 from torch.utils.data import DataLoader
 from datasets import load_dataset
 import evaluate as evaluate
@@ -10,6 +17,10 @@ from transformers import AutoModel, AutoModelForSequenceClassification
 import argparse
 import subprocess
 import matplotlib.pyplot as plt
+
+# Added: bf16 mixed precision, switched on with --amp. Off by default, so a plain run is
+# the skeleton's float32 training.
+AMP = False
 from tqdm import tqdm
 
 import time
@@ -35,20 +46,28 @@ class CustomModelforSequenceClassification(nn.Module):
             # raise NotImplementedError("You need to implement the forward function for the full model")
 
             # pass the input_ids and attention_mask into the model to get the output object (you can name it `output`)
+            output = self.model(input_ids=input_ids, attention_mask=attention_mask)
 
             # get the last hidden state from the output object using `.last_hidden_state`
+            last_hidden_state = output.last_hidden_state  # (batch, seq_len, hidden)
 
             # take the mean of the last hidden state along the sequence length dimension
+            sentence_repr = torch.mean(last_hidden_state, dim=1)  # (batch, hidden)
 
             # pass the mean into the self.classifier to get the logits
-
+            logits = self.classifier(sentence_repr)  # (batch, num_labels)
 
         elif self.type == "head":
             # TODO: implement the forward function for the head-tuned model
             # raise NotImplementedError("You need to implement the forward function for the head-tuned model")
             # Hint: it should be the same as the full model
+            # The encoder is frozen in train() (requires_grad = False), so autograd stops at
+            # the classifier and only the head gets gradients.
+            output = self.model(input_ids=input_ids, attention_mask=attention_mask)
+            last_hidden_state = output.last_hidden_state
+            sentence_repr = torch.mean(last_hidden_state, dim=1)
+            logits = self.classifier(sentence_repr)
 
-        
         elif self.type == 'prefix':
 
             # TODO: implement the forward function for the prefix-tuned model
@@ -56,32 +75,43 @@ class CustomModelforSequenceClassification(nn.Module):
 
             # the prefix is at self.prefix, but this is only one prefix, we want to append it to each instance in a batch
             # we make multiple copies of self.prefix here. the number of copies = batch size
+            batch_size = input_ids.shape[0]
+            # (prefix_length, hidden) -> (batch, prefix_length, hidden); expand shares memory,
+            # and gradients from every copy sum back into the one self.prefix
+            prefix = self.prefix.unsqueeze(0).expand(batch_size, -1, -1)
 
-            
             # concatentate the input embeddings and our prefix, make sure to put them into our gpu
             # get the input embeddings
             # Hint: you can use self.model.embeddings.word_embeddings to get the input embeddings
+            word_embeds = self.model.embeddings.word_embeddings(input_ids)  # (batch, seq_len, hidden)
 
             # concatenate the input embeddings and the prefix
             # Hint: check torch.cat for how to concatenate the tensors
+            # the prefix goes first, as in Figure 1
+            inputs_embeds = torch.cat([prefix, word_embeds], dim=1)  # (batch, prefix_length + seq_len, hidden)
 
             # move the input embeddings to the gpu
             # Hint: use .to(device='cuda') to move the tensor to the gpu
             # name the final tensor as `inputs_embeds`
+            inputs_embeds = inputs_embeds.to(device='cuda')
 
-            
             # modify attention mask
             # we need to add the prefix to the attention mask
             # the mask on the prefix should be 1, with the dimension of (batch_size, prefix_length)
             # name the final attention mask as `attention_mask`
+            prefix_mask = torch.ones(batch_size, prefix.shape[1], dtype=attention_mask.dtype, device=attention_mask.device)
+            attention_mask = torch.cat([prefix_mask, attention_mask], dim=1)  # (batch, prefix_length + seq_len)
 
-            
             # pass the input embeddings and the attention mask into the model
             # you can do this by passing a keyword argument "inputs_embeds" to model.forward
-
+            # (the model still adds position embeddings and applies its embedding LayerNorm)
+            output = self.model(inputs_embeds=inputs_embeds, attention_mask=attention_mask)
 
             # get the last hidden state from the output object, take the mean, and pass it into the classifier
             # Hint: same as the full model and head-tuned model
+            last_hidden_state = output.last_hidden_state
+            sentence_repr = torch.mean(last_hidden_state, dim=1)
+            logits = self.classifier(sentence_repr)
 
 
         return {"logits": logits}
@@ -173,10 +203,13 @@ def evaluate_model(model, dataloader, device):
         # Hints:
         # - see the getitem function in the BoolQADataset class for how to access the input_ids and attention_mask
         # - use to() to move the tensors to the device
-
+        input_ids = batch['input_ids'].to(device)
+        attention_mask = batch['attention_mask'].to(device)
 
         # forward pass
         # name the output as `output`
+        with torch.no_grad(), torch.autocast(device_type="cuda", dtype=torch.bfloat16, enabled=AMP):  # autocast added for --amp
+            output = model(input_ids=input_ids, attention_mask=attention_mask)
 
         # your code ends here
 
@@ -218,21 +251,40 @@ def train(mymodel, num_epochs, train_dataloader, validation_dataloader, test_dat
         # TODO: implement the optimizer for head-tuned model
         # raise NotImplementedError("You need to implement the optimizer for head-tuned model")
         # you need to get the parameters of the classifier (head), you can do this by calling mymodel.head.parameters()
+        # (the head is stored as mymodel.classifier in CustomModelforSequenceClassification;
+        # there is no mymodel.head attribute)
+
+        # freeze the pretrained encoder: no gradients are computed or stored for it
+        for param in mymodel.model.parameters():
+            param.requires_grad = False
 
         # then you need to pass these parameters to the optimizer
         # name the optimizer as `custom_optimizer`
         # Hints: you can refer to how we do this for the optimizer above
+        # same decay rule as above: decay the weight matrix, not the bias
+        custom_optimizer = torch.optim.AdamW([
+            {'params': [mymodel.classifier.weight], 'weight_decay': weight_decay},
+            {'params': [mymodel.classifier.bias], 'weight_decay': 0.0}
+        ], lr=lr)
 
         # your code ends here
-    
+
     elif mymodel.type == "prefix":
         # TODO: implement the optimizer for prefix-tuned model
         # raise NotImplementedError("You need to implement the optimizer for prefix-tuned model")
         # you need to get the parameters of the prefix, you can do this by calling mymodel.prefix
         # name the parameters as `prefix_params`
 
+        # freeze the pretrained encoder; gradients still flow THROUGH it to the prefix,
+        # but none are stored for its weights
+        for param in mymodel.model.parameters():
+            param.requires_grad = False
+
+        prefix_params = mymodel.prefix
+
         # you also need to get the parameters of the classifier (head), you can do this by calling mymodel.head.parameters()
         # name the parameters as `classifier_params`
+        classifier_params = mymodel.classifier.parameters()
 
         # your code ends here
         # group the parameters together
@@ -240,18 +292,26 @@ def train(mymodel, num_epochs, train_dataloader, validation_dataloader, test_dat
 
 
     # now, we set up the learning rate scheduler
+    # Added: the skeleton attached the scheduler to `optimizer` in every case, but head and
+    # prefix tuning step `custom_optimizer`, so their learning rate never warmed up or decayed.
+    # The scheduler now wraps whichever optimizer actually steps.
+    scheduled_optimizer = optimizer if mymodel.type in ("full", "auto") else custom_optimizer
     lr_scheduler = get_scheduler(
         "linear",
-        optimizer=optimizer,
+        optimizer=scheduled_optimizer,
         num_warmup_steps=50,
         num_training_steps=len(train_dataloader) * num_epochs
     )
 
     loss = torch.nn.CrossEntropyLoss()
-    
+
     epoch_list = []
     train_acc_list = []
     dev_acc_list = []
+
+    # Added: report how many parameters this run updates (checks Sections 3.2.2 and 3.2.3)
+    n_tuned = sum(p.numel() for g in scheduled_optimizer.param_groups for p in g['params'] if p.requires_grad)
+    print(f"Tuned parameters ({mymodel.type}): {n_tuned}")
 
     for epoch in range(num_epochs):
 
@@ -287,18 +347,25 @@ def train(mymodel, num_epochs, train_dataloader, validation_dataloader, test_dat
 
             # get the input_ids, attention_mask, and labels from the batch and put them on the device
             # Hints: similar to the evaluate_model function
-
+            input_ids = batch['input_ids'].to(device)
+            attention_mask = batch['attention_mask'].to(device)
+            labels = batch['labels'].to(device)
 
             # forward pass
             # name the output as `output`
             # Hints: refer to the evaluate_model function on how to get the predictions (logits)
             # - It's slightly different from the implementation in train of base_classification.py
+            # (the custom model returns a dict, so the logits are output['logits'], not output.logits;
+            # the "auto" model's output object also supports ['logits'])
+            with torch.autocast(device_type="cuda", dtype=torch.bfloat16, enabled=AMP):  # Added: --amp
+                output = mymodel(input_ids=input_ids, attention_mask=attention_mask)
+                predictions = output['logits']
 
-
-            # compute the loss using the loss function
-
+                # compute the loss using the loss function
+                model_loss = loss(predictions, labels)
 
             # loss backward
+            model_loss.backward()
 
             # your code ends here
 
@@ -350,11 +417,12 @@ def plot(train_list, valid_list, name, finetune_method):
     plt.savefig(f'{name}_{finetune_method}.png')
 
 
-def pre_process(model_name, batch_size, device, small_subset, type='auto'):
+def pre_process(model_name, batch_size, device, small_subset, type='auto', seed=None):
     # download dataset
     print("Loading the dataset ...")
     dataset = load_dataset("boolq")
-    dataset = dataset.shuffle()  # shuffle the data
+    # Added: fixed seed so every run uses the same train/test split
+    dataset = dataset.shuffle(seed=seed)  # shuffle the data
 
     print("Slicing the data...")
     if small_subset:
@@ -414,6 +482,9 @@ def pre_process(model_name, batch_size, device, small_subset, type='auto'):
     
     if type == "auto":
         pretrained_model = AutoModelForSequenceClassification.from_pretrained(model_name, num_labels=2)
+        # Added: train() reads mymodel.type, which the Hugging Face model doesn't have,
+        # so the skeleton crashed with --type auto
+        pretrained_model.type = "auto"
     else:
         pretrained_model = CustomModelforSequenceClassification(model_name, num_labels=2, type=type)
 
@@ -434,10 +505,14 @@ if __name__ == "__main__":
     parser.add_argument("--model", type=str, default="bert-base-uncased")
     parser.add_argument("--type", type=str, default="auto", choices=["auto", "full", "head", "prefix"], help="type of tuning to perform on the model")
     parser.add_argument("--prefix_length", type=int, default=128)
+    parser.add_argument("--seed", type=int, default=42)  # Added
+    parser.add_argument("--amp", action="store_true", help="bf16 mixed precision (Added)")
     args = parser.parse_args()
     print(f"Specified arguments: {args}")
 
     assert type(args.small_subset) == bool, "small_subset must be a boolean"
+    torch.manual_seed(args.seed)  # Added
+    AMP = args.amp  # Added: module-level flag read by train() and evaluate_model()
     global prefix_length
     prefix_length = args.prefix_length
     #load the data and models
@@ -445,7 +520,8 @@ if __name__ == "__main__":
                                                                                              args.batch_size,
                                                                                              args.device,
                                                                                              args.small_subset,
-                                                                                             args.type)
+                                                                                             args.type,
+                                                                                             args.seed)
     print(" >>>>>>>>  Starting training ... ")
     train(pretrained_model, args.num_epochs, train_dataloader, validation_dataloader, test_dataloader, args.device, args.lr, args.model)
     

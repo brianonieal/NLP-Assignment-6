@@ -1,0 +1,44 @@
+{
+  "model": "bert-base-uncased",
+  "max_len": 128,
+  "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "gpu_gib": 5.99658203125,
+  "largest_batch": 48,
+  "trials": {
+    "32": {
+      "fits": true,
+      "peak_allocated_gib": 4.333886623382568,
+      "seconds_per_step": 0.542975902557373
+    },
+    "48": {
+      "fits": true,
+      "peak_allocated_gib": 5.804620265960693,
+      "seconds_per_step": 1.2973730564117432
+    },
+    "49": {
+      "fits": false,
+      "peak_allocated_gib": null,
+      "seconds_per_step": null
+    },
+    "50": {
+      "fits": false,
+      "peak_allocated_gib": null,
+      "seconds_per_step": null
+    },
+    "52": {
+      "fits": false,
+      "peak_allocated_gib": null,
+      "seconds_per_step": null
+    },
+    "56": {
+      "fits": false,
+      "peak_allocated_gib": null,
+      "seconds_per_step": null
+    },
+    "64": {
+      "fits": false,
+      "peak_allocated_gib": null,
+      "seconds_per_step": null
+    }
+  }
+}

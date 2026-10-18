@@ -1,0 +1,48 @@
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+model: Qwen/Qwen2.5-1.5B-Instruct (local backend)
+Demonstrations (train indices, from 7206 passages of <= 120 words):
+   6605  yes  are canadian geese protected in the united states
+   7314  no   is st patrick's day a scottish holiday
+   7206  yes  does orlando bloom play legolas in the hobbit
+   6946  no   is a heat engine and heat pump the same thing
+    673  yes  is part of niagara falls in new york
+   5808  no   is there a train station at burnham on sea
+   4443  yes  is it possible to send a letter without return address
+   4255  no   is blue cross blue shield the same as independence blue cross
+[   1/30] gold=yes completion=' yes'   correct  (1013 prompt tokens)
+[   2/30] gold=yes completion=' no'    WRONG  (1065 prompt tokens)
+[   3/30] gold=no  completion=' yes'   WRONG  (1034 prompt tokens)
+[   4/30] gold=no  completion=' no'    correct  (1059 prompt tokens)
+[   5/30] gold=yes completion=' no'    WRONG  (1010 prompt tokens)
+[   6/30] gold=yes completion=' no'    WRONG  (1061 prompt tokens)
+[   7/30] gold=yes completion=' no'    WRONG  (1083 prompt tokens)
+[   8/30] gold=yes completion=' yes'   correct  (1038 prompt tokens)
+[   9/30] gold=no  completion=' no'    correct  (1060 prompt tokens)
+[  10/30] gold=yes completion=' no'    WRONG  (997 prompt tokens)
+[  11/30] gold=yes completion=' yes'   correct  (1009 prompt tokens)
+[  12/30] gold=no  completion=' no'    correct  (1001 prompt tokens)
+[  13/30] gold=yes completion=' yes'   correct  (1022 prompt tokens)
+[  14/30] gold=yes completion=' no'    WRONG  (1146 prompt tokens)
+[  15/30] gold=yes completion=' yes'   correct  (1085 prompt tokens)
+[  16/30] gold=yes completion=' yes'   correct  (1086 prompt tokens)
+[  17/30] gold=no  completion=' yes'   WRONG  (1219 prompt tokens)
+[  18/30] gold=no  completion=' no'    correct  (1107 prompt tokens)
+[  19/30] gold=yes completion=' yes'   correct  (1082 prompt tokens)
+[  20/30] gold=no  completion=' no'    correct  (1002 prompt tokens)
+[  21/30] gold=yes completion=' yes'   correct  (1027 prompt tokens)
+[  22/30] gold=yes completion=' no'    WRONG  (1051 prompt tokens)
+[  23/30] gold=yes completion=' yes'   correct  (1091 prompt tokens)
+[  24/30] gold=yes completion=' yes'   correct  (1113 prompt tokens)
+[  25/30] gold=yes completion=' yes'   correct  (1099 prompt tokens)
+[  26/30] gold=no  completion=' no'    correct  (1055 prompt tokens)
+[  27/30] gold=no  completion=' no'    correct  (1071 prompt tokens)
+[  28/30] gold=yes completion=' yes'   correct  (1005 prompt tokens)
+[  29/30] gold=no  completion=' no'    correct  (1026 prompt tokens)
+[  30/30] gold=no  completion=' no'    correct  (1121 prompt tokens)
+
+accuracy = 21/30 = 0.7000
+forced-choice accuracy (higher of P(' yes'), P(' no')) = 21/30 = 0.7000
+gold labels: 19 yes, 11 no (always-yes baseline = 0.6333)
+predicted yes: 14, predicted no: 16, unparseable: 0
+time: 9.8 s
+saved ..\results\boolq_fewshot_Qwen2.5-1.5B-Instruct_n30.json

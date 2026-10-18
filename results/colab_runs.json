@@ -1,0 +1,438 @@
+{
+  "_source": "Copied from the console logs of the Colab runs (experiments/colab_roberta_grid.ipynb), which are in Google Drive under My Drive/NLP-HW6-colab/. Merge with: python experiments/import_colab.py results/colab_runs.json",
+  "_hardware": "Google Colab, NVIDIA L4, torch 2.11.0+cu130, transformers 4.46.3, datasets 2.21.0",
+  "3.1.4_control_roberta-base_fp32_lr0.0001_ep7": {
+    "model": "roberta-base",
+    "batch_size": 32,
+    "lr": 0.0001,
+    "epochs": 7,
+    "train_acc": [
+      0.613375,
+      0.623125,
+      0.62275,
+      0.622,
+      0.621875,
+      0.623125,
+      0.62325
+    ],
+    "dev_acc": [
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997
+    ],
+    "final_dev_acc": 0.6217125382262997,
+    "final_test_acc": 0.6229852838121934,
+    "max_memory_reserved_gb": 4.152344,
+    "amp": false,
+    "command": "python base_classification.py --device cuda --model roberta-base --batch_size 32 --lr 0.0001 --num_epochs 7"
+  },
+  "3.1.4_extra_roberta-base_lr2e-05_ep9": {
+    "model": "roberta-base",
+    "batch_size": 32,
+    "lr": 2e-05,
+    "epochs": 9,
+    "train_acc": [
+      0.60325,
+      0.640625,
+      0.714125,
+      0.789875,
+      0.85375,
+      0.903375,
+      0.9345,
+      0.957,
+      0.965875
+    ],
+    "dev_acc": [
+      0.6217125382262997,
+      0.6795107033639144,
+      0.6850152905198776,
+      0.7128440366972477,
+      0.7327217125382263,
+      0.7458715596330275,
+      0.7532110091743119,
+      0.7559633027522936,
+      0.7636085626911315
+    ],
+    "final_dev_acc": 0.7636085626911315,
+    "final_test_acc": 0.7477224947442186,
+    "max_memory_reserved_gb": 3.599609,
+    "amp": true,
+    "command": "python base_classification.py --device cuda --model roberta-base --batch_size 32 --lr 2e-05 --num_epochs 9 --amp"
+  },
+  "3.1.4_grid_bert-base-uncased_lr0.0001_ep7": {
+    "model": "bert-base-uncased",
+    "batch_size": 32,
+    "lr": 0.0001,
+    "epochs": 7,
+    "train_acc": [
+      0.6125,
+      0.6345,
+      0.677,
+      0.75825,
+      0.86575,
+      0.924875,
+      0.9585
+    ],
+    "dev_acc": [
+      0.635474006116208,
+      0.6342507645259939,
+      0.6440366972477064,
+      0.6877675840978593,
+      0.6990825688073394,
+      0.6788990825688074,
+      0.6868501529051988
+    ],
+    "final_dev_acc": 0.6868501529051988,
+    "final_test_acc": 0.6734407848633497,
+    "max_memory_reserved_gb": 3.232422,
+    "amp": true,
+    "command": "python base_classification.py --device cuda --model bert-base-uncased --batch_size 32 --lr 0.0001 --num_epochs 7 --amp"
+  },
+  "3.1.4_grid_bert-base-uncased_lr0.0001_ep9": {
+    "model": "bert-base-uncased",
+    "batch_size": 32,
+    "lr": 0.0001,
+    "epochs": 9,
+    "train_acc": [
+      0.625625,
+      0.681125,
+      0.7755,
+      0.8625,
+      0.91875,
+      0.95225,
+      0.971625,
+      0.986875,
+      0.99375
+    ],
+    "dev_acc": [
+      0.6516819571865443,
+      0.6574923547400612,
+      0.6409785932721712,
+      0.681651376146789,
+      0.7174311926605504,
+      0.6932721712538227,
+      0.6978593272171254,
+      0.7097859327217125,
+      0.7055045871559633
+    ],
+    "final_dev_acc": 0.7055045871559633,
+    "final_test_acc": 0.6734407848633497,
+    "max_memory_reserved_gb": 3.232422,
+    "amp": true,
+    "command": "python base_classification.py --device cuda --model bert-base-uncased --batch_size 32 --lr 0.0001 --num_epochs 9 --amp"
+  },
+  "3.1.4_grid_bert-base-uncased_lr0.0005_ep7": {
+    "model": "bert-base-uncased",
+    "batch_size": 32,
+    "lr": 0.0005,
+    "epochs": 7,
+    "train_acc": [
+      0.609375,
+      0.620875,
+      0.620875,
+      0.623125,
+      0.623125,
+      0.623,
+      0.623125
+    ],
+    "dev_acc": [
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997
+    ],
+    "final_dev_acc": 0.6217125382262997,
+    "final_test_acc": 0.6229852838121934,
+    "max_memory_reserved_gb": 3.232422,
+    "amp": true,
+    "command": "python base_classification.py --device cuda --model bert-base-uncased --batch_size 32 --lr 0.0005 --num_epochs 7 --amp"
+  },
+  "3.1.4_grid_bert-base-uncased_lr0.0005_ep9": {
+    "model": "bert-base-uncased",
+    "batch_size": 32,
+    "lr": 0.0005,
+    "epochs": 9,
+    "train_acc": [
+      0.600125,
+      0.606375,
+      0.60875,
+      0.6095,
+      0.60725,
+      0.61325,
+      0.61625,
+      0.62025,
+      0.621875
+    ],
+    "dev_acc": [
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997
+    ],
+    "final_dev_acc": 0.6217125382262997,
+    "final_test_acc": 0.6229852838121934,
+    "max_memory_reserved_gb": 3.232422,
+    "amp": true,
+    "command": "python base_classification.py --device cuda --model bert-base-uncased --batch_size 32 --lr 0.0005 --num_epochs 9 --amp"
+  },
+  "3.1.4_grid_bert-base-uncased_lr0.001_ep7": {
+    "model": "bert-base-uncased",
+    "batch_size": 32,
+    "lr": 0.001,
+    "epochs": 7,
+    "train_acc": [
+      0.590625,
+      0.588875,
+      0.592875,
+      0.6065,
+      0.61025,
+      0.615625,
+      0.621625
+    ],
+    "dev_acc": [
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997
+    ],
+    "final_dev_acc": 0.6217125382262997,
+    "final_test_acc": 0.6229852838121934,
+    "max_memory_reserved_gb": 3.232422,
+    "amp": true,
+    "command": "python base_classification.py --device cuda --model bert-base-uncased --batch_size 32 --lr 0.001 --num_epochs 7 --amp"
+  },
+  "3.1.4_grid_bert-base-uncased_lr0.001_ep9": {
+    "model": "bert-base-uncased",
+    "batch_size": 32,
+    "lr": 0.001,
+    "epochs": 9,
+    "train_acc": [
+      0.589,
+      0.582875,
+      0.599875,
+      0.605125,
+      0.6085,
+      0.612375,
+      0.61725,
+      0.617625,
+      0.621625
+    ],
+    "dev_acc": [
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997
+    ],
+    "final_dev_acc": 0.6217125382262997,
+    "final_test_acc": 0.6229852838121934,
+    "max_memory_reserved_gb": 3.232422,
+    "amp": true,
+    "command": "python base_classification.py --device cuda --model bert-base-uncased --batch_size 32 --lr 0.001 --num_epochs 9 --amp"
+  },
+  "3.1.4_grid_roberta-base_lr0.0001_ep7": {
+    "model": "roberta-base",
+    "batch_size": 32,
+    "lr": 0.0001,
+    "epochs": 7,
+    "train_acc": [
+      0.60925,
+      0.621375,
+      0.62175,
+      0.62275,
+      0.62325,
+      0.62275,
+      0.623
+    ],
+    "dev_acc": [
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997
+    ],
+    "final_dev_acc": 0.6217125382262997,
+    "final_test_acc": 0.6229852838121934,
+    "max_memory_reserved_gb": 3.599609,
+    "amp": true,
+    "command": "python base_classification.py --device cuda --model roberta-base --batch_size 32 --lr 0.0001 --num_epochs 7 --amp"
+  },
+  "3.1.4_grid_roberta-base_lr0.0001_ep9": {
+    "model": "roberta-base",
+    "batch_size": 32,
+    "lr": 0.0001,
+    "epochs": 9,
+    "train_acc": [
+      0.60975,
+      0.620375,
+      0.622375,
+      0.62275,
+      0.622875,
+      0.6225,
+      0.623125,
+      0.623125,
+      0.623125
+    ],
+    "dev_acc": [
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997
+    ],
+    "final_dev_acc": 0.6217125382262997,
+    "final_test_acc": 0.6229852838121934,
+    "max_memory_reserved_gb": 3.599609,
+    "amp": true,
+    "command": "python base_classification.py --device cuda --model roberta-base --batch_size 32 --lr 0.0001 --num_epochs 9 --amp"
+  },
+  "3.1.4_grid_roberta-base_lr0.0005_ep7": {
+    "model": "roberta-base",
+    "batch_size": 32,
+    "lr": 0.0005,
+    "epochs": 7,
+    "train_acc": [
+      0.60775,
+      0.619875,
+      0.622,
+      0.6225,
+      0.623125,
+      0.622625,
+      0.622875
+    ],
+    "dev_acc": [
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997
+    ],
+    "final_dev_acc": 0.6217125382262997,
+    "final_test_acc": 0.6229852838121934,
+    "max_memory_reserved_gb": 3.599609,
+    "amp": true,
+    "command": "python base_classification.py --device cuda --model roberta-base --batch_size 32 --lr 0.0005 --num_epochs 7 --amp"
+  },
+  "3.1.4_grid_roberta-base_lr0.0005_ep9": {
+    "model": "roberta-base",
+    "batch_size": 32,
+    "lr": 0.0005,
+    "epochs": 9,
+    "train_acc": [
+      0.6015,
+      0.617625,
+      0.6205,
+      0.62125,
+      0.62175,
+      0.62325,
+      0.622375,
+      0.623125,
+      0.623125
+    ],
+    "dev_acc": [
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997
+    ],
+    "final_dev_acc": 0.6217125382262997,
+    "final_test_acc": 0.6229852838121934,
+    "max_memory_reserved_gb": 3.599609,
+    "amp": true,
+    "command": "python base_classification.py --device cuda --model roberta-base --batch_size 32 --lr 0.0005 --num_epochs 9 --amp"
+  },
+  "3.1.4_grid_roberta-base_lr0.001_ep7": {
+    "model": "roberta-base",
+    "batch_size": 32,
+    "lr": 0.001,
+    "epochs": 7,
+    "train_acc": [
+      0.600375,
+      0.620625,
+      0.622375,
+      0.623375,
+      0.623,
+      0.623125,
+      0.62325
+    ],
+    "dev_acc": [
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997
+    ],
+    "final_dev_acc": 0.6217125382262997,
+    "final_test_acc": 0.6229852838121934,
+    "max_memory_reserved_gb": 3.599609,
+    "amp": true,
+    "command": "python base_classification.py --device cuda --model roberta-base --batch_size 32 --lr 0.001 --num_epochs 7 --amp"
+  },
+  "3.1.4_grid_roberta-base_lr0.001_ep9": {
+    "model": "roberta-base",
+    "batch_size": 32,
+    "lr": 0.001,
+    "epochs": 9,
+    "train_acc": [
+      0.604125,
+      0.62,
+      0.621625,
+      0.622375,
+      0.623,
+      0.622875,
+      0.623,
+      0.623125,
+      0.623125
+    ],
+    "dev_acc": [
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997,
+      0.6217125382262997
+    ],
+    "final_dev_acc": 0.6217125382262997,
+    "final_test_acc": 0.6229852838121934,
+    "max_memory_reserved_gb": 3.599609,
+    "amp": true,
+    "command": "python base_classification.py --device cuda --model roberta-base --batch_size 32 --lr 0.001 --num_epochs 9 --amp"
+  }
+}
